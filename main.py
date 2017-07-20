@@ -142,12 +142,17 @@ def calculate_possible_digit(l, line, row):
 
 def calculate_sudoku(l):
     guard = True
+    count = 0
     while (guard):
+        count += 1
+        print('运行：', count, '次')
         guard = False
         for line in range(9):
             for row in range(9):
                 if (isinstance(l[line][row], int) and l[line][row] == 0) or (isinstance(l[line][row], list)):
                     temp = calculate_possible_digit(l, line, row)
+                    if isinstance(temp, list) and len(temp) == 0:
+                        print('wrong')
                     if temp != l[line][row]:
                         l[line][row] = temp
                         print_list(l)
@@ -156,6 +161,10 @@ def calculate_sudoku(l):
     print('结果:')
     print_list(l)
     return l
+
+
+def dfs(l):
+    pass
 
 
 def is_sudoku(l):
