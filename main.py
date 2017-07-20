@@ -45,10 +45,6 @@ def calculate_possible_digit(l, line, row):
     l_row = [l[i][row] for i in range(9)]
     l_nine_square = [l[line // 3 * 3 + i][row // 3 * 3 + j] for i in range(3) for j in range(3)]
 
-    # print(l_line)
-    # print(l_row)
-    # print(l_nine_square)
-
     t_l = [True for i in range(10)]
     t_l[0] = False
     for i in range(9):
@@ -61,31 +57,62 @@ def calculate_possible_digit(l, line, row):
 
     r_l = [i for i in range(1, 10) if t_l[i]]
 
-    # if isinstance(l[line][row], list):
-    #     if 0 not in l_line:
-    #         t_l = list()
-    #         for i in range(9):
-    #             if isinstance(l_line[i], list) and l_line[i] != l[line][row]:
-    #                 t_l.extend(l_line[i])
-    #         for j in range(len(r_l)):
-    #             if r_l[j] not in t_l:
-    #                 return r_l[j]
-    #     if 0 not in l_row:
-    #         t_l = list()
-    #         for i in range(9):
-    #             if isinstance(l_row[i], list) and l_row[i] != l[line][row]:
-    #                 t_l.extend(l_row[i])
-    #         for j in range(len(r_l)):
-    #             if r_l[j] not in t_l:
-    #                 return r_l[j]
-    #     if 0 not in l_nine_square:
-    #         t_l = list()
-    #         for i in range(9):
-    #             if isinstance(l_nine_square[i], list) and l_nine_square != l[line][row]:
-    #                 t_l.extend(l_nine_square[i])
-    #         for j in range(len(r_l)):
-    #             if r_l[j] not in t_l:
-    #                 return r_l[j]
+    if isinstance(l[line][row], list) and not 0 in l_line:
+        t_l = list()
+        count = 0
+        for i in range(9):
+            if isinstance(l_line[i], list):
+                if l_line[i] == l[line][row]:
+                    count += 1
+                    if count > 1:
+                        t_l.extend(l_line[i])
+                    else:
+                        continue
+                else:
+                    t_l.extend(l_line[i])
+
+        for i in range(len(r_l)):
+            if r_l[i] not in t_l:
+                print(line, row, r_l[i])
+                return r_l[i]
+
+    if isinstance(l[line][row], list) and not 0 in l_row:
+        t_l = list()
+        count = 0
+        for i in range(9):
+            if isinstance(l_row[i], list):
+                if l_row[i] == l[line][row]:
+                    count += 1
+                    if count > 1:
+                        t_l.extend(l_row[i])
+                    else:
+                        continue
+                else:
+                    t_l.extend(l_row[i])
+
+        for i in range(len(r_l)):
+            if r_l[i] not in t_l:
+                print(line, row, r_l[i])
+                return r_l[i]
+
+    if isinstance(l[line][row], list) and not 0 in l_nine_square:
+        t_l = list()
+        count = 0
+        for i in range(9):
+            if isinstance(l_nine_square[i], list):
+                if l_nine_square[i] == l[line][row]:
+                    count += 1
+                    if count > 1:
+                        t_l.extend(l_nine_square[i])
+                    else:
+                        continue
+                else:
+                    t_l.extend(l_nine_square[i])
+
+        for i in range(len(r_l)):
+            if r_l[i] not in t_l:
+                print(line, row, r_l[i])
+                return r_l[i]
 
     if len(r_l) == 1:
         return r_l[0]
@@ -126,7 +153,7 @@ def calculate_possible_list(l, line, row):
         if l[line][row][i] not in t_l:
             print(line, row, l[line][row][i])
             return l[line][row][i]
-    print('aa',t_l)
+    print('aa', t_l)
 
     return l[line][row]
 
@@ -137,19 +164,12 @@ def calculate_sudoku(l):
         guard = False
         for line in range(9):
             for row in range(9):
-                if (isinstance(l[line][row], int) and l[line][row] == 0):
+                if (isinstance(l[line][row], int) and l[line][row] == 0) or (isinstance(l[line][row], list)):
                     l[line][row] = calculate_possible_digit(l, line, row)
                     if isinstance(l[line][row], int):
                         print_list(l)
                         print('\n')
                         guard = True
-                elif isinstance(l[line][row], list):
-                    l[line][row] = calculate_possible_list(l, line, row)
-                    if isinstance(l[line][row], int):
-                        print_list(l)
-                        print('\n')
-                        guard = True
-
     print_list(l)
     return l
 
@@ -206,5 +226,5 @@ if __name__ == '__main__':
     # print(is_sudoku(l))
     # print_list(get_list())
     # calculate_possible_digit(get_list(), 8, 0)
-    calculate_sudoku(get_list())
-    # print(is_sudoku(calculate_sudoku(get_list())))
+    # calculate_sudoku(get_list())
+    print(is_sudoku(calculate_sudoku(get_list())))
