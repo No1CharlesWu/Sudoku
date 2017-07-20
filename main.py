@@ -1,3 +1,6 @@
+import copy
+
+
 def get_list():
     '''
     l = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -31,7 +34,7 @@ def get_list():
          [4, 0, 0, 6, 0, 0, 1, 7, 0],
          [0, 0, 0, 4, 8, 0, 5, 0, 0]]
 
-    l = [[0, 4, 9, 0, 0, 0, 0, 0, 7],
+    l = [[0, 4, 0, 0, 0, 0, 0, 0, 7],
          [7, 0, 0, 3, 0, 0, 0, 4, 0],
          [0, 0, 2, 7, 0, 9, 6, 0, 0],
          [4, 0, 5, 0, 0, 8, 0, 0, 9],
@@ -39,7 +42,7 @@ def get_list():
          [8, 0, 6, 0, 0, 3, 2, 0, 4],
          [0, 0, 8, 0, 1, 6, 4, 0, 0],
          [5, 0, 0, 0, 0, 0, 0, 9, 0],
-         [1, 2, 0, 0, 9, 0, 0, 7, 6]]
+         [0, 2, 0, 0, 9, 0, 0, 0, 6]]
 
     # l = [[0, 7, 0, 0, 9, 0, 5, 8, 0],
     #      [0, 0, 0, 0, 7, 0, 0, 0, 0],
@@ -56,7 +59,7 @@ def get_list():
 def print_list(l):
     for i in range(9):
         for j in range(9):
-            print('%-5s' % l[i][j], end='')
+            print('%-10s' % l[i][j], end='')
         print('\n')
 
 
@@ -93,7 +96,7 @@ def calculate_possible_digit(l, line, row):
 
         for i in range(len(r_l)):
             if r_l[i] not in t_l:
-                print(line, row, r_l[i])
+                # print(line, row, r_l[i])
                 return r_l[i]
 
     if isinstance(l[line][row], list) and not 0 in l_row:
@@ -112,7 +115,7 @@ def calculate_possible_digit(l, line, row):
 
         for i in range(len(r_l)):
             if r_l[i] not in t_l:
-                print(line, row, r_l[i])
+                # print(line, row, r_l[i])
                 return r_l[i]
 
     if isinstance(l[line][row], list) and not 0 in l_nine_square:
@@ -131,7 +134,7 @@ def calculate_possible_digit(l, line, row):
 
         for i in range(len(r_l)):
             if r_l[i] not in t_l:
-                print(line, row, r_l[i])
+                # print(line, row, r_l[i])
                 return r_l[i]
 
     if len(r_l) == 1:
@@ -145,7 +148,7 @@ def calculate_sudoku(l):
     count = 0
     while (guard):
         count += 1
-        print('运行：', count, '次')
+        # print('运行：', count, '次')
         guard = False
         for line in range(9):
             for row in range(9):
@@ -155,16 +158,77 @@ def calculate_sudoku(l):
                         print('wrong')
                     if temp != l[line][row]:
                         l[line][row] = temp
-                        print_list(l)
-                        print('\n')
+                        # print_list(l)
+                        # print('\n')
                         guard = True
-    print('结果:')
-    print_list(l)
+    # print('结果:')
+    # print_list(l)
     return l
 
 
 def dfs(l):
-    pass
+    my_copy_list = copy.deepcopy(l)
+    index = {'min': 100, 'line': 100, 'row': 100}
+    for line in range(9):
+        for row in range(9):
+            if isinstance(my_copy_list[line][row], list) and (len(my_copy_list[line][row]) < index['min']):
+                index['min'] = len(my_copy_list[line][row])
+                index['line'] = line
+                index['row'] = row
+
+    print(index)
+    for i in range(index['min']):
+        temp_list = copy.deepcopy(l)
+        temp_list[index['line']][index['row']] = my_copy_list[index['line']][index['row']][i]
+        temp_list = calculate_sudoku(temp_list)
+
+        print_list(temp_list)
+
+        if is_digit(temp_list):
+            if is_sudoku(temp_list):
+                print('ok')
+                print_list(temp_list)
+                return temp_list
+            else:
+                print('not sudoku')
+        else:
+            if need_dfs(temp_list):
+                print('asb')
+                temp_list = dfs(temp_list)
+
+                if temp_list is not None:
+                    if is_sudoku(temp_list):
+                        return temp_list
+            else:
+                print('not sudoku')
+    return None
+
+
+def need_dfs(l):
+    for line in range(9):
+        for row in range(9):
+            if isinstance(l[line][row], list) and len(l[line][row]) == 0:
+                return False
+    return True
+
+
+def is_digit(l):
+    for line in range(9):
+        for row in range(9):
+            if isinstance(l[line][row], list):
+                return False
+    return True
+
+
+def cal(l):
+    temp_list = calculate_sudoku(l)
+    print_list(temp_list)
+    if is_digit(temp_list):
+        return temp_list
+    else:
+        if need_dfs(temp_list):
+            temp_list = dfs(temp_list)
+            return temp_list
 
 
 def is_sudoku(l):
@@ -219,5 +283,6 @@ if __name__ == '__main__':
     # print(is_sudoku(l))
     # print_list(get_list())
     # calculate_possible_digit(get_list(), 8, 0)
-    calculate_sudoku(get_list())
+    # calculate_sudoku(get_list())
     # print(is_sudoku(calculate_sudoku(get_list())))
+    print_list(cal(get_list()))
